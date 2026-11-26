@@ -1,0 +1,13 @@
+guest_name,room,date,service,time,table,party_size
+O'Brien,7,2026-12-04,dinner,18:30,3,4
+Nolan,5,2026-12-04,dinner,18:45,1,2
+Murphy,3,2026-12-04,dinner,19:00,6,2
+Doyle,8,2026-12-04,dinner,19:00,7,3
+Byrne,4,2026-12-03,dinner,19:15,2,2
+Quinn,6,2026-12-03,dinner,19:30,12,4
+Hennessy,9,2026-12-04,dinner,19:30,5,5
+Walsh,11,2026-12-04,dinner,19:45,10,2
+Kelly,12,2026-12-04,dinner,20:00,8,2
+Walsh,2,2026-12-04,lunch,13:00,4,2
+Walsh,2,2026-12-04,dinner,20:15,9,2
+Ryan,10,2026-12-04,dinner,20:30,11,2

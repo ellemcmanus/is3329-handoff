@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Kitchen briefing{% endblock %}
+{% block content %}
+<h1>Kitchen briefing: {{ briefing.day.strftime('%A %d %B') }}, {{ briefing.service }}</h1>
+<form method="get" class="row noprint">
+  <label>Date <input type="date" name="date" value="{{ briefing.day.isoformat() }}"></label>
+  <label>Service
+    <select name="service">
+      <option {% if briefing.service == 'dinner' %}selected{% endif %}>dinner</option>
+      <option {% if briefing.service == 'lunch' %}selected{% endif %}>lunch</option>
+    </select>
+  </label>
+  <button type="submit">Show</button>
+  <button type="button" onclick="window.print()">Print</button>
+</form>
+<p class="muted">Only requests confirmed by reception are shown. Ordered by seating time.</p>
+
+{% set urgent_rows = briefing.rows | selectattr('urgent') | list %}
+{% if urgent_rows %}
+  <div class="flag urgent">Urgent: {% for r in urgent_rows %}{{ r.booking.guest_name }} (table {{ r.booking.table }}, {{ r.booking.time }}){% if not loop.last %}; {% endif %}{% endfor %}. See below.</div>
+{% endif %}
+
+{% if briefing.rows %}
+<table>
+  <tr><th>Seated</th><th>Table</th><th>Guest</th><th>Allergies</th><th>Requests</th></tr>
+  {% for r in briefing.rows %}
+  <tr class="{{ 'urgent' if r.urgent }}">
+    <td>{{ r.booking.time }}</td>
+    <td>{{ r.booking.table }}</td>
+    <td>{{ r.booking.guest_name }} (room {{ r.booking.room }}), party of {{ r.booking.party_size }}</td>
+    <td class="allergy">{{ r.allergies | join('; ') }}</td>
+    <td>
+      {% for i in r.requests %}
+        <div><strong>{{ i.request_type|capitalize }}:</strong>
+          {% if i.request_type == 'celebration' %}{{ i.details.occasion }}, {{ i.details.request or 'request not stated yet' }}{% if i.details.message %} ("{{ i.details.message }}"){% endif %}
+          {% elif i.request_type == 'complaint' %}{{ i.details.about }}: {{ i.details.issue }}{% if i.details.when %} ({{ i.details.when }}){% endif %}
+          {% endif %}
+          {% for f in i.flags if f.level == 'urgent' or 'allergy applies' in f.message|lower %}
+            <div class="flag {{ f.level }}">{{ f.message }}</div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+  <p>No bookings for this service.</p>
+{% endif %}
+
+<h2>Picnics for {{ briefing.day.strftime('%a %d %b') }}</h2>
+{% if briefing.picnics %}
+<ul>
+  {% for p in briefing.picnics %}
+    <li>{{ p.details.people }} people, pickup {{ p.details.pickup_time or '(time not given)' }}{% if p.details.preferences %}, {{ p.details.preferences }}{% endif %}
+      {% for f in p.flags if 'allergy applies' in f.message|lower %}<div class="flag warning">{{ f.message }}</div>{% endfor %}</li>
+  {% endfor %}
+</ul>
+{% else %}
+  <p class="muted">No confirmed picnics.</p>
+{% endif %}
+{% endblock %}

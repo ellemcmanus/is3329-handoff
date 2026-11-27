@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}New guest note{% endblock %}
+{% block content %}
+<h1>New guest note</h1>
+<form method="post" class="box">
+  <div class="row">
+    <label>Guest surname <input name="guest_name" value="{{ form.get('guest_name', '') }}" required></label>
+    <label>Room <input name="room" size="4" value="{{ form.get('room', '') }}" required></label>
+    <label>Stay from <input type="date" name="stay_start" value="{{ form.get('stay_start', '') }}" required></label>
+    <label>to <input type="date" name="stay_end" value="{{ form.get('stay_end', '') }}" required></label>
+  </div>
+  <label>Note (type or paste what the guest said)
+    <textarea name="note_text" required>{{ form.get('note_text', '') }}</textarea>
+  </label>
+  <button type="submit">Analyse note</button>
+</form>
+
+<h2>Synthetic examples</h2>
+<p class="muted">Made-up guests for testing and the demo. Click one to fill the form.</p>
+<ul>
+  {% for e in examples %}
+    <li><a href="{{ url_for('web.new_note', example=loop.index0) }}">{{ e.guest_name }}, room {{ e.room }}</a>:
+        <span class="muted">{{ e.purpose }}</span></li>
+  {% endfor %}
+</ul>
+{% endblock %}

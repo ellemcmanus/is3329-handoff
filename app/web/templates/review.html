@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Review requests{% endblock %}
+{% block content %}
+<h1>Review requests: {{ note.guest.name }}, room {{ note.guest.room }}</h1>
+<p class="muted">Stay {{ note.guest.stay_start.strftime('%a %d %b') }} to {{ note.guest.stay_end.strftime('%a %d %b') }}.
+  Suggested by AI: check each request against the original note before confirming.</p>
+
+{% for f in note.flags %}<div class="flag {{ f.level }}">{{ f.message }}</div>{% endfor %}
+
+<div class="cols">
+  <div class="box original"><strong>Original note</strong>
+
+{{ note.text }}</div>
+
+  <div>
+    {% if note.ai_failed %}
+      <div class="box">The manual entry form (wireframe 5) will be added in Deliverable 3.
+        The safety net above still checked the raw note.</div>
+    {% endif %}
+    {% for item in items %}
+      <div class="box">
+        <strong>{{ item.request_type|capitalize }}</strong>
+        {% if item.is_confirmed %}<span class="confirmed">Confirmed by {{ item.confirmed_by }} at {{ item.confirmed_at }}</span>{% endif %}
+        <ul>
+          {% for key, value in item.details.items() %}
+            <li>{{ key|replace('_', ' ') }}:
+              {% if key == 'allergens' %}{{ value|map('allergen')|join(', ') }}{% else %}{{ value }}{% endif %}</li>
+          {% endfor %}
+        </ul>
+        <div class="muted">From: "{{ item.source_text }}"</div>
+        {% for f in item.flags %}<div class="flag {{ f.level }}">{{ f.message }}</div>{% endfor %}
+
+        {% if not item.is_confirmed %}
+          <form method="post" action="{{ url_for('web.confirm', item_id=item.item_id) }}" class="row">
+            <select name="staff" required>
+              <option value="">Confirmed by...</option>
+              {% for s in staff %}<option>{{ s }}</option>{% endfor %}
+            </select>
+            {% if item.is_blocked %}
+              <label><input type="checkbox" name="safety_checked" value="yes"> I have checked the note</label>
+            {% endif %}
+            <button type="submit">Confirm request</button>
+          </form>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

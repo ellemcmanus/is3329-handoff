@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Kitchen hand-off{% endblock %}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 1000px; margin: 0 auto; padding: 16px; color: #222; }
+    nav { display: flex; gap: 16px; border-bottom: 1px solid #ccc; padding-bottom: 8px; margin-bottom: 16px; }
+    nav strong { margin-right: auto; }
+    label { display: block; margin-top: 8px; font-size: 14px; }
+    input, textarea, select { font: inherit; padding: 4px; }
+    textarea { width: 100%; height: 110px; }
+    button { font: inherit; padding: 6px 12px; cursor: pointer; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .cols { display: grid; grid-template-columns: 1fr 1.6fr; gap: 16px; }
+    .box { border: 1px solid #bbb; border-radius: 6px; padding: 12px; margin-bottom: 12px; }
+    .original { background: #f6f6f6; white-space: pre-wrap; }
+    .flag { border-radius: 4px; padding: 4px 8px; margin: 4px 0; font-size: 14px; }
+    .flag.info { background: #eef4fb; }
+    .flag.warning { background: #fff4d6; }
+    .flag.urgent, .flag.block { background: #fde2e2; font-weight: 600; }
+    .confirmed { color: #1d6b2f; font-weight: 600; }
+    .messages { background: #fff4d6; padding: 8px; border-radius: 4px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #bbb; padding: 6px; text-align: left; vertical-align: top; }
+    tr.urgent td { background: #fde2e2; }
+    .allergy { font-weight: 600; color: #a11; }
+    .muted { color: #666; font-size: 14px; }
+    @media print { nav, form, .noprint { display: none; } }
+    @media (max-width: 700px) { .cols { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <strong>Kitchen hand-off (prototype, synthetic data only)</strong>
+    <a href="{{ url_for('web.new_note') }}">New note</a>
+    <a href="{{ url_for('web.briefing') }}">Kitchen briefing</a>
+  </nav>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}<div class="messages">{% for m in messages %}<div>{{ m }}</div>{% endfor %}</div>{% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</body>
+</html>

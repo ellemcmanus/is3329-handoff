@@ -58,7 +58,7 @@ The database file (`handoff.db`) is created on first run. Delete it to start aga
 ## Run the tests
 
 pytest
-Expected result: **43 passed**.
+Expected result: **47 passed**.
 
 ```bash
 pytest
